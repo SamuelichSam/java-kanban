@@ -8,24 +8,19 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
-
-    }
-
-    public Task(String name, String description, Status status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-    }
-
     public Task(Integer id, String name, String description, Status status) {
         this.id = id;
         this.description = description;
         this.name = name;
         this.status = status;
+    }
+
+    public Task(String name, String description, Status status) {
+        this(null, name, description, status);
+    }
+
+    public Task(String name, String description) {
+        this(name, description, Status.NEW);
     }
 
     public int getId() {
@@ -66,7 +61,7 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
 
         Task task = (Task) o;
-        return id == task.id;
+        return Objects.equals(id, task.id);
     }
 
     @Override
