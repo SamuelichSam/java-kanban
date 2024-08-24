@@ -1,2 +1,2 @@
 # java-kanban
-Repository for homework project.
+Отстаю от графика), второпях совсем забыл про Code Style)))
