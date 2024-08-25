@@ -23,7 +23,7 @@ public class Task {
         this(name, description, Status.NEW);
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -22,7 +22,7 @@ public interface TaskManager {
 
     List<Epic> getAllEpics();
 
-    List<Subtask> getAllEpicSabtusks(Epic epic);
+    List<Subtask> getAllEpicSabtusks(Integer epicId);
 
     Task addNewTask(Task newTask);
 
