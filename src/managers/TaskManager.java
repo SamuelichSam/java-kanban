@@ -46,8 +46,6 @@ public interface TaskManager {
 
     Subtask deleteSubtaskById(Integer subtaskId);
 
-    void updateEpicStatus(Epic epic);
-
     void deleteAllEpics();
 
 
