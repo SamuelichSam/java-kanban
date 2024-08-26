@@ -69,17 +69,20 @@ class InMemoryTaskManagerTest {
 
     @Test
     void subTaskEqualsById() {
-        Subtask subtask = new Subtask(0, "Задача-1", "Описание-1", Status.NEW, 2);
-        Subtask anotherSubtask = new Subtask(0, "Задача-2", "Описание-2", Status.DONE, 4);
+        Epic epic = new Epic("Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
+        Subtask expectedSubtask = new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
 
+        Epic addedEpic = taskManager.addNewEpic(epic);
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
+        System.out.println(addedEpic);
 
-        Assertions.assertEquals(addedSubtask, anotherSubtask, "Задачи не совпадают");
+        Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
     }
 
     @Test
     void addNewEpicShouldSaveEpic() {
-        Epic epic = new Epic(0,"Задача-1", "Описание-1");
+        Epic epic = new Epic(0, "Задача-1", "Описание-1");
         Epic expectedEpic = new Epic(0, "Задача-1", "Описание-1");
 
         Task addedEpic = taskManager.addNewEpic(epic);
@@ -101,7 +104,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void generateIdShouldNotConflictId () {
+    void generateIdShouldNotConflictId() {
         Task task = new Task(4, "Задача-1", "Описание-1", Status.NEW);
         Task expectedTask = new Task(4, "Задача-1", "Описание-1", Status.NEW);
 

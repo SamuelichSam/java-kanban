@@ -22,7 +22,6 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void historyManagerShouldSavePreVersionOfTask() {
-
         Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
         Task updTask = new Task(0, "Задача-1upd", "Описание-upd1", Status.IN_PROGRESS);
 

@@ -11,7 +11,7 @@ public class Main {
         TaskManager manager = Managers.getDefault();
 
         Task task = new Task("Задача", "Описание", Status.NEW);
-        Epic epic  = new Epic("Эпик", "Описание");
+        Epic epic = new Epic("Эпик", "Описание");
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание-1", 1);
         Subtask subTask2 = new Subtask("Подзадача-2", "Описание-2", 1);
 
@@ -43,7 +43,6 @@ public class Main {
         System.out.println("Эпики:");
         for (Epic epic : manager.getAllEpics()) {
             System.out.println(epic);
-
             for (Task task : manager.getAllEpicSabtusks(1)) {
                 System.out.println("--> " + task);
             }
@@ -52,7 +51,6 @@ public class Main {
         for (Task subtask : manager.getAllSubtasks()) {
             System.out.println(subtask);
         }
-
         System.out.println("История:");
         for (Task task : manager.getHistory()) {
             System.out.println(task);
