@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements TaskManager {
     private Integer counterId = 0;
 
     public InMemoryTaskManager() {
-        this.historyManager = Managers.getDefaultHistory();
     }
 
     private Integer generateNewId() {
