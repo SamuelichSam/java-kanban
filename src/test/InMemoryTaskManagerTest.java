@@ -56,15 +56,26 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addNewSubtaskShouldSaveTask() {
-        Subtask subtask = new Subtask("Задача-1", "Описание-1", 1);
-        Subtask expectedSubtask = new Subtask(0, "Задача-1", "Описание-1", Status.NEW, 1);
+        Epic epic = new Epic("Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask("Задача-1", "Описание-1", 0);
+        Subtask expectedSubtask = new Subtask(1, "Задача-1", "Описание-1", Status.NEW, 0);
+        Epic addedEpic = taskManager.addNewEpic(epic);
 
-        Task addedTask = taskManager.addNewTask(subtask);
+        Task addedSubtask = taskManager.addNewSubtask(subtask);
 
-        Assertions.assertNotNull(addedTask, "Задача не сохранилась");
-        Assertions.assertNotNull(addedTask.getId(), "Не сгенерировался id");
-        Assertions.assertEquals(expectedSubtask, addedTask, "Задачи не совпадают");
+        Assertions.assertNotNull(addedSubtask, "Задача не сохранилась");
+        Assertions.assertNotNull(addedSubtask.getId(), "Не сгенерировался id");
+        Assertions.assertEquals(expectedSubtask, addedSubtask, "Задачи не совпадают");
+    }
 
+    @Test
+    void subtaskShouldNotAddedIfEpicIsNull () {
+        Epic epic = null;
+        Subtask subtask = new Subtask("Задача-1", "Описание-1", 0);
+
+        Task addedSubtask = taskManager.addNewSubtask(subtask);
+
+        Assertions.assertNull(addedSubtask, "Подзадача не может быть создана без Эпика");
     }
 
     @Test
@@ -75,7 +86,6 @@ class InMemoryTaskManagerTest {
 
         Epic addedEpic = taskManager.addNewEpic(epic);
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
-        System.out.println(addedEpic);
 
         Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
     }
@@ -90,7 +100,6 @@ class InMemoryTaskManagerTest {
         Assertions.assertNotNull(addedEpic, "Задача не сохранилась");
         Assertions.assertNotNull(addedEpic.getId(), "Не сгенерировался id");
         Assertions.assertEquals(expectedEpic, addedEpic, "Задачи не совпадают");
-
     }
 
     @Test
