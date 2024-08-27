@@ -83,8 +83,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик-1", "Описание-1");
         Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
         Subtask expectedSubtask = new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
-
         Epic addedEpic = taskManager.addNewEpic(epic);
+        
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
 
         Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
