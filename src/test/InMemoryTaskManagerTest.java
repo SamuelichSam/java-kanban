@@ -10,6 +10,8 @@ import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.util.List;
+
 class InMemoryTaskManagerTest {
 
     private TaskManager taskManager;
@@ -84,7 +86,7 @@ class InMemoryTaskManagerTest {
         Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
         Subtask expectedSubtask = new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
         Epic addedEpic = taskManager.addNewEpic(epic);
-        
+
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
 
         Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
@@ -120,5 +122,33 @@ class InMemoryTaskManagerTest {
         Task addedTask = taskManager.addNewTask(task);
 
         Assertions.assertNotEquals(expectedTask.getId(), addedTask.getId(), "Конфликт id");
+    }
+
+    @Test
+    void deletedSubtasksShouldNotSaveOldId() {
+        Epic epic = new Epic(0, "Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(1, "Задача-2", "Описание-2", Status.NEW, 0);
+        Epic addedEpic = taskManager.addNewEpic(epic);
+        Subtask addedSubtask = taskManager.addNewSubtask(subtask);
+
+        taskManager.deleteSubtaskById(1);
+        Subtask delSubtask = taskManager.getSubtaskById(1);
+
+        Assertions.assertNull(delSubtask, "Подзадача при удалении сохранила ID");
+    }
+    @Test
+    void epicShouldNotStayIrrelevantSubtasks() {
+        Epic epic = new Epic(0, "Эпик-1", "Описание-1");
+        Subtask subtask1 = new Subtask(1, "Задача-2", "Описание-2", Status.NEW, 0);
+        Subtask subtask2 = new Subtask(2, "Задача-2", "Описание-2", Status.NEW, 0);
+        Subtask updSubtask2 = new Subtask(2, "Задача-2", "Описание-2", Status.DONE, 0);
+        Epic addedEpic = taskManager.addNewEpic(epic);
+        Subtask addedSubtask1 = taskManager.addNewSubtask(subtask1);
+        Subtask addedSubtask2 = taskManager.addNewSubtask(subtask2);
+
+        taskManager.updateSubtask(updSubtask2);
+        List<Subtask> subtasks = taskManager.getAllEpicSabtusks(0);
+
+        Assertions.assertEquals(1, subtasks.size(), "Внутри эпика осталась неактуальная подзадача");
     }
 }
