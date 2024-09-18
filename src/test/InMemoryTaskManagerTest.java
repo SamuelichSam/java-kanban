@@ -34,7 +34,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TaskEqualsById() {
+    void taskEqualsById() {
         Task task = new Task("Задача-1", "Описание-1");
         Task anotherTask = new Task(0, "Задача-2", "Описание-2", Status.IN_PROGRESS);
 
@@ -71,7 +71,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void subtaskShouldNotAddedIfEpicIsNull () {
+    void subtaskShouldNotAddedIfEpicIsNull() {
         Epic epic = null;
         Subtask subtask = new Subtask("Задача-1", "Описание-1", 0);
 
@@ -136,6 +136,7 @@ class InMemoryTaskManagerTest {
 
         Assertions.assertNull(delSubtask, "Подзадача при удалении сохранила ID");
     }
+
     @Test
     void epicShouldNotStayIrrelevantSubtasks() {
         Epic epic = new Epic(0, "Эпик-1", "Описание-1");
