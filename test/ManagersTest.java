@@ -1,5 +1,3 @@
-package test;
-
 import managers.HistoryManager;
 import managers.Managers;
 import managers.TaskManager;
@@ -9,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class ManagersTest {
 
     @Test
-    public void Managers() {
+    public void managers() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
 
