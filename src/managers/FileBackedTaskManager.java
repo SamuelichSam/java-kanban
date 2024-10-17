@@ -16,34 +16,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    public void save() {
+    private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,epic");
+            writer.newLine();
             for (Task task : getAllTasks()) {
-                writer.write(toString(task) + "\n");
+                writer.write(task.toString() + "\n");
             }
             for (Epic epic : getAllEpics()) {
-                writer.write(toString(epic) + "\n");
+                writer.write(epic.toString() + "\n");
             }
             for (Subtask subtask : getAllSubtasks()) {
-                writer.write(toString(subtask) + "\n");
+                writer.write(subtask.toString() + "\n");
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении в файл");
-        }
-    }
-
-    private static String toString(Task task) {
-        if (task instanceof Subtask) {
-            Subtask subtask = (Subtask) task;
-            return String.format("%d,%s,%s,%s,%s,%d",
-                    subtask.getId(), TaskType.SUBTASK, subtask.getName(), subtask.getStatus(), subtask.getDescription(), subtask.getEpicId());
-        } else if (task instanceof Epic) {
-            return String.format("%d,%s,%s,%s,%s,",
-                    task.getId(), TaskType.EPIC, task.getName(), task.getStatus(), task.getDescription());
-        } else {
-            return String.format("%d,%s,%s,%s,%s,",
-                    task.getId(), TaskType.TASK, task.getName(), task.getStatus(), task.getDescription());
         }
     }
 
@@ -80,8 +67,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         int id = Integer.parseInt(fields[0]);
         TaskType type = TaskType.valueOf(fields[1]);
         String name = fields[2];
-        Status status = Status.valueOf(fields[3]);
-        String description = fields[4];
+        String description = fields[3];
+        Status status = Status.valueOf(fields[4]);
 
         switch (type) {
             case TASK:
@@ -98,77 +85,90 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task addNewTask(Task newTask) {
+        super.addNewTask(newTask);
         save();
-        return super.addNewTask(newTask);
+        return newTask;
     }
 
     @Override
     public Subtask addNewSubtask(Subtask newSubtask) {
+        super.addNewSubtask(newSubtask);
         save();
-        return super.addNewSubtask(newSubtask);
+        return newSubtask;
     }
 
     @Override
     public Epic addNewEpic(Epic newEpic) {
+        super.addNewEpic(newEpic);
         save();
-        return super.addNewEpic(newEpic);
+        return newEpic;
     }
 
     @Override
     public Task updateTask(Task updatedTask) {
+        super.updateTask(updatedTask);
         save();
-        return super.updateTask(updatedTask);
+        return updatedTask;
     }
 
     @Override
     public Subtask updateSubtask(Subtask updatedSubtask) {
+        super.updateSubtask(updatedSubtask);
         save();
-        return super.updateSubtask(updatedSubtask);
+        return updatedSubtask;
     }
 
     @Override
     public Epic updateEpic(Epic epic) {
+        super.updateEpic(epic);
         save();
-        return super.updateEpic(epic);
+        return updateEpic(epic);
     }
 
     @Override
     public Task deleteTaskById(Integer id) {
+        super.deleteTaskById(id);
         save();
-        return super.deleteTaskById(id);
+        return getTaskById(id);
     }
 
     @Override
     public Subtask deleteSubtaskById(Integer subtaskId) {
+        super.deleteSubtaskById(subtaskId);
         save();
-        return super.deleteSubtaskById(subtaskId);
+        return getSubtaskById(subtaskId);
     }
 
     @Override
     public Epic deleteEpicById(Integer epicId) {
+        super.deleteEpicById(epicId);
         save();
-        return super.deleteEpicById(epicId);
+        return getEpicById(epicId);
     }
 
     @Override
     public void deleteAllTasks() {
-        save();
         super.deleteAllTasks();
+        save();
     }
 
     @Override
     public void deleteAllSubtasks() {
-        save();
         super.deleteAllSubtasks();
+        save();
     }
 
     @Override
     public void deleteAllEpics() {
-        save();
         super.deleteAllEpics();
+        save();
     }
 
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    public void saveForTests() {
+        save();
     }
 }

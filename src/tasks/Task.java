@@ -71,8 +71,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ID Задачи " + id + ". " + "Имя " + name + ". " +
-                "Описание " + description + ". " +
-                "Статус " + status + "|||";
+        return String.format("%d,%s,%s,%s,%s",
+                id, TaskType.TASK, name, description, status);
     }
 }
