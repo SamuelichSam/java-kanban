@@ -80,7 +80,7 @@ public class FileBackedTaskManagerTest {
         Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
         Epic epic = new Epic(1, "Эпик-1", "Описание-1");
         Subtask subtask = new Subtask(2, "Подзадача-1", "Описание-1", Status.NEW, 1);
-        List lines = new ArrayList<>();
+        List<String> lines = new ArrayList<>();
         lines.add("id,type,name,status,description,epic");
         lines.add(task.toString());
         lines.add(epic.toString());
