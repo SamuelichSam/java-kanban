@@ -21,7 +21,6 @@ public class FileBackedTaskManagerTest {
     @Test
     public void managerShouldSaveEmptyFile() {
         FileBackedTaskManager saveManager = new FileBackedTaskManager(file);
-        saveManager.saveForTests();
 
         Assertions.assertTrue(saveManager.getAllTasks().isEmpty(), "Фаил должен быть пустым");
         Assertions.assertTrue(saveManager.getAllEpics().isEmpty(), "Фаил должен быть пустым");
@@ -74,5 +73,30 @@ public class FileBackedTaskManagerTest {
         Assertions.assertEquals(task, loadedManager.getTaskById(0), "Задача не прочиталась из файла");
         Assertions.assertEquals(epic, loadedManager.getEpicById(1), "Задача не прочиталась из файла");
         Assertions.assertEquals(subtask, loadedManager.getSubtaskById(2), "Задача не прочиталась из файла");
+    }
+
+    @Test
+    public void managerShouldLoadFromFileSavedTask2() throws IOException {
+        Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
+        Epic epic = new Epic(1, "Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(2, "Подзадача-1", "Описание-1", Status.NEW, 1);
+        List lines = new ArrayList<>();
+        lines.add("id,type,name,status,description,epic");
+        lines.add(task.toString());
+        lines.add(epic.toString());
+        lines.add(subtask.toString());
+        Files.write(file.toPath(), lines);
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+        loadedManager.addNewTask(new Task(10, "Задача-10", "Описание-10", Status.NEW));
+        loadedManager.addNewEpic(new Epic(15, "Эпик-15", "Описание-15"));
+        loadedManager.addNewSubtask(new Subtask(20, "Подзадача-20", "Описание-20", Status.NEW, 15));
+
+        Assertions.assertEquals(task, loadedManager.getTaskById(0), "Задача не прочиталась из файла");
+        Assertions.assertEquals(epic, loadedManager.getEpicById(1), "Задача не прочиталась из файла");
+        Assertions.assertEquals(subtask, loadedManager.getSubtaskById(2), "Задача не прочиталась из файла");
+        Assertions.assertEquals(task.getName(), loadedManager.getTaskById(0).getName(), "Название задачи не совпадает");
+        Assertions.assertEquals(epic.getName(), loadedManager.getEpicById(1).getName(), "Название задачи не совпадает");
+        Assertions.assertEquals(subtask.getName(), loadedManager.getSubtaskById(2).getName(), "Название задачи не совпадает");
     }
 }
