@@ -87,7 +87,7 @@ class InMemoryTaskManagerTest {
 
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
 
-        Assertions.assertEquals(addedSubtask.getId(), expectedSubtask.getId(), "Задачи не совпадают");
+        Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
     }
 
     @Test

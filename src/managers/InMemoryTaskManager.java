@@ -77,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return null;
         }
-        if (newSubtask.getId() == null) {
+        if (newSubtask.getId() == null || subTasks.containsKey(newSubtask.getId())) {
             Integer newId = generateNewId();
             newSubtask.setId(newId);
         }
@@ -138,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic addNewEpic(Epic newEpic) {
-        if (newEpic.getId() == null) {
+        if (newEpic.getId() == null || epics.containsKey(newEpic.getId())) {
             Integer newId = generateNewId();
             newEpic.setId(newId);
         }
