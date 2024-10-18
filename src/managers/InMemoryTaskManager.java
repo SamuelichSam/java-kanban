@@ -24,7 +24,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task addNewTask(Task newTask) {
-        if (newTask.getId() == null) {
+        if (newTask.getId() == null || tasks.containsKey(newTask.getId())) {
             Integer newId = generateNewId();
             newTask.setId(newId);
         }

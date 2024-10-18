@@ -39,10 +39,10 @@ public class FileBackedTaskManagerTest {
     @Test
     public void managerShouldSaveToFile() {
         FileBackedTaskManager saveManager = new FileBackedTaskManager(file);
-        Task task = new Task("Задача-1", "Описание-1");
-        Epic epic = new Epic("Эпик-1", "Описание-1");
-        Subtask subtask = new Subtask("Подзадача-1", "Описание-1", 1);
-        Subtask subtask2 = new Subtask("Подзадача-2", "Описание-2", 1);
+        Task task = new Task(0,"Задача-1", "Описание-1", Status.NEW);
+        Epic epic = new Epic(1,"Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(2,"Подзадача-1", "Описание-1", Status.NEW, 1);
+        Subtask subtask2 = new Subtask(3, "Подзадача-2", "Описание-2", Status.NEW,1);
         saveManager.addNewTask(task);
         saveManager.addNewEpic(epic);
         saveManager.addNewSubtask(subtask);

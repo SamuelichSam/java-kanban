@@ -82,12 +82,12 @@ class InMemoryTaskManagerTest {
     void subTaskEqualsById() {
         Epic epic = new Epic("Эпик-1", "Описание-1");
         Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
-        Subtask expectedSubtask = new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
+        Subtask expectedSubtask = new Subtask(0, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
         Epic addedEpic = taskManager.addNewEpic(epic);
 
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
 
-        Assertions.assertEquals(addedSubtask, expectedSubtask, "Задачи не совпадают");
+        Assertions.assertEquals(addedSubtask.getId(), expectedSubtask.getId(), "Задачи не совпадают");
     }
 
     @Test
@@ -114,12 +114,13 @@ class InMemoryTaskManagerTest {
 
     @Test
     void generateIdShouldNotConflictId() {
-        Task task = new Task(4, "Задача-1", "Описание-1", Status.NEW);
-        Task expectedTask = new Task(4, "Задача-1", "Описание-1", Status.NEW);
+        Task task = new Task("Задача-1", "Описание-1", Status.NEW);
+        Task anotherTask = new Task(0, "Задача-2", "Описание-2", Status.NEW);
 
         Task addedTask = taskManager.addNewTask(task);
+        Task addedAnotherTask = taskManager.addNewTask(anotherTask);
 
-        Assertions.assertNotEquals(expectedTask.getId(), addedTask.getId(), "Конфликт id");
+        Assertions.assertNotEquals(addedTask.getId(), addedAnotherTask.getId(), "Конфликт id");
     }
 
     @Test
