@@ -19,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write("id,type,name,description,status,epic");
             writer.newLine();
             for (Task task : getAllTasks()) {
                 writer.write(task.toString() + "\n");
@@ -41,16 +41,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             List<String> lines = Files.readAllLines(file.toPath());
 
             for (int i = 1; i < lines.size(); i++) {
-                Task task = fromString(lines.get(i));
+                Task strTask = fromString(lines.get(i));
 
-                if (task instanceof Epic) {
-                    manager.epics.put(task.getId(), (Epic) task);
-                } else if (task instanceof Subtask) {
-                    manager.subTasks.put(task.getId(), (Subtask) task);
+                if (strTask instanceof Epic) {
+                    Epic epic = new Epic(strTask.getId(), strTask.getName(), strTask.getDescription());
+                    epic.setStatus(strTask.getStatus());
+                    manager.addNewEpic(epic);
+                } else if (strTask instanceof Subtask) {
+                    Subtask subtask = new Subtask(strTask.getName(), strTask.getDescription(), ((Subtask) strTask).getEpicId());
+                    subtask.setId(strTask.getId());
+                    subtask.setStatus(strTask.getStatus());
+                    manager.addNewSubtask(subtask);
                 } else {
-                    manager.tasks.put(task.getId(), task);
+                    Task task = new Task(strTask.getName(), strTask.getDescription(), strTask.getStatus());
+                    task.setId(strTask.getId());
+                    manager.addNewTask(task);
                 }
             }
+
             for (Subtask subtask : manager.subTasks.values()) {
                 Epic epic = manager.epics.get(subtask.getEpicId());
                 if (epic != null) {

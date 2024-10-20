@@ -10,7 +10,7 @@ public class Subtask extends Task {
     }
 
     public Subtask(String name, String description, Integer epicId) {
-        this(null, name, description, Status.NEW, epicId);
+        this(0, name, description, Status.NEW, epicId);
     }
 
     public int getEpicId() {

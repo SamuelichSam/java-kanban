@@ -7,6 +7,7 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+    protected boolean initialize;
 
     public Task(Integer id, String name, String description, Status status) {
         this.id = id;
@@ -16,7 +17,7 @@ public class Task {
     }
 
     public Task(String name, String description, Status status) {
-        this(null, name, description, status);
+        this(0, name, description, status);
     }
 
     public Task(String name, String description) {
@@ -29,6 +30,7 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+        this.initialize = true;
     }
 
     public String getName() {
@@ -53,6 +55,10 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean isInitialized() {
+        return initialize;
     }
 
     @Override
