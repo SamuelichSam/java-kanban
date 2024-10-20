@@ -52,6 +52,7 @@ public class FileBackedTaskManagerTest {
         loadedManager.addNewTask(new Task(10, "Задача-10", "Описание-10", Status.DONE));
         loadedManager.addNewEpic(new Epic(15, "Эпик-15", "Описание-15"));
         loadedManager.addNewSubtask(new Subtask(20, "Подзадача-20", "Описание-20", Status.NEW, 1));
+        loadedManager.addNewTask(new Task(null, "Задача-30", "Описание-30", Status.NEW));
 
         Assertions.assertEquals(task, loadedManager.getTaskById(0), "Задача не прочиталась из файла");
         Assertions.assertEquals(epic, loadedManager.getEpicById(1), "Задача не прочиталась из файла");

@@ -58,7 +58,7 @@ class InMemoryTaskManagerTest {
     void addNewSubtaskShouldSaveTask() {
         Epic epic = new Epic("Эпик-1", "Описание-1");
         Subtask subtask = new Subtask("Задача-1", "Описание-1", 0);
-        Subtask expectedSubtask = new Subtask(0, "Задача-1", "Описание-1", Status.NEW, 0);
+        Subtask expectedSubtask = new Subtask(1, "Задача-1", "Описание-1", Status.NEW, 0);
         Epic addedEpic = taskManager.addNewEpic(epic);
 
         Task addedSubtask = taskManager.addNewSubtask(subtask);
@@ -83,7 +83,7 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик-1", "Описание-1");
         Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
         Subtask expectedSubtask =
-                new Subtask(0, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
+                new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
         Epic addedEpic = taskManager.addNewEpic(epic);
 
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
