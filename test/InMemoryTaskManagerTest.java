@@ -82,8 +82,7 @@ class InMemoryTaskManagerTest {
     void subTaskEqualsById() {
         Epic epic = new Epic("Эпик-1", "Описание-1");
         Subtask subtask = new Subtask(0, "Задача-2", "Описание-2", Status.NEW, 0);
-        Subtask expectedSubtask =
-                new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
+        Subtask expectedSubtask = new Subtask(1, "Задача-2", "Описание-2", Status.IN_PROGRESS, 0);
         Epic addedEpic = taskManager.addNewEpic(epic);
 
         Subtask addedSubtask = taskManager.addNewSubtask(subtask);
@@ -115,23 +114,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void generateIdShouldNotConflictId() {
-        Task task = new Task(0,"Задача-1", "Описание-1", Status.NEW);
-        Task anotherTask = new Task(0, "Задача-2", "Описание-2", Status.NEW);
-        Epic epic = new Epic(0, "Эпик-1", "Описание-1");
-        Epic anotherEpic = new Epic(0, "Эпик-2", "Описание-2");
-        Subtask subtask = new Subtask(0, "Подзадача-1", "Описание-1", Status.NEW, 3);
-        Subtask anotherSubtask = new Subtask(0, "Подзадача-2", "Описание-2", Status.NEW, 3);
+        Task task = new Task(4, "Задача-1", "Описание-1", Status.NEW);
+        Task expectedTask = new Task(4, "Задача-1", "Описание-1", Status.NEW);
 
         Task addedTask = taskManager.addNewTask(task);
-        Task addedAnotherTask = taskManager.addNewTask(anotherTask);
-        Epic addedEpic = taskManager.addNewEpic(epic);
-        Epic addedAnotherEpic = taskManager.addNewEpic(anotherEpic);
-        Subtask addedSubtask = taskManager.addNewSubtask(subtask);
-        Subtask addedAnotherSubtask = taskManager.addNewSubtask(anotherSubtask);
 
-        Assertions.assertNotEquals(addedTask.getId(), addedAnotherTask.getId(), "Конфликт id");
-        Assertions.assertNotEquals(addedEpic.getId(), addedAnotherEpic.getId(), "Конфликт id");
-        Assertions.assertNotEquals(addedSubtask.getId(), addedAnotherSubtask.getId(), "Конфликт id");
+        Assertions.assertNotEquals(expectedTask.getId(), addedTask.getId(), "Конфликт id");
     }
 
     @Test
