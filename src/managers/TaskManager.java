@@ -40,11 +40,11 @@ public interface TaskManager {
 
     void deleteAllTasks();
 
-    Task deleteTaskById(Integer id);
+    void deleteTaskById(Integer id);
 
-    Epic deleteEpicById(Integer epicId);
+    void deleteEpicById(Integer epicId);
 
-    Subtask deleteSubtaskById(Integer subtaskId);
+    void deleteSubtaskById(Integer subtaskId);
 
     void deleteAllEpics();
 

@@ -7,6 +7,7 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+    protected boolean initialize;
 
     public Task(Integer id, String name, String description, Status status) {
         this.id = id;
@@ -16,7 +17,7 @@ public class Task {
     }
 
     public Task(String name, String description, Status status) {
-        this(null, name, description, status);
+        this(0, name, description, status);
     }
 
     public Task(String name, String description) {
@@ -29,6 +30,7 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+        this.initialize = true;
     }
 
     public String getName() {
@@ -55,6 +57,10 @@ public class Task {
         this.status = status;
     }
 
+    public boolean isInitialized() {
+        return initialize;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,8 +77,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ID Задачи " + id + ". " + "Имя " + name + ". " +
-                "Описание " + description + ". " +
-                "Статус " + status + "|||";
+        return String.format("%d,%s,%s,%s,%s",
+                id, TaskType.TASK, name, description, status);
     }
 }
