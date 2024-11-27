@@ -13,6 +13,5 @@ class ManagersTest {
 
         Assertions.assertNotNull(taskManager, "Объект не инициализирован");
         Assertions.assertNotNull(historyManager, "Объект не инициализирован");
-
     }
 }

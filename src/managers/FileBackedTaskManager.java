@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.ManagerSaveException;
 import tasks.*;
 
 import java.io.BufferedWriter;
@@ -7,6 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -19,7 +22,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("id,type,name,description,status,epic");
+            writer.write("id,type,name,description,status,epic,duration,starttime,endtime");
             writer.newLine();
             for (Task task : getAllTasks()) {
                 writer.write(task.toString() + "\n");
@@ -44,17 +47,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 Task strTask = fromString(lines.get(i));
 
                 if (strTask instanceof Epic) {
-                    Epic epic = new Epic(strTask.getId(), strTask.getName(), strTask.getDescription());
-                    epic.setStatus(strTask.getStatus());
+                    Epic epic = new Epic(strTask.getId(), strTask.getName(), strTask.getDescription(),
+                            strTask.getStatus(), strTask.getDuration(), strTask.getStartTime(), strTask.getEndTime());
                     manager.addNewEpic(epic);
                 } else if (strTask instanceof Subtask) {
-                    Subtask subtask = new Subtask(strTask.getName(), strTask.getDescription(), ((Subtask) strTask).getEpicId());
-                    subtask.setId(strTask.getId());
-                    subtask.setStatus(strTask.getStatus());
+                    Subtask subtask = new Subtask(strTask.getId(), strTask.getName(), strTask.getDescription(),
+                            strTask.getStatus(), strTask.getDuration(), strTask.getStartTime(),
+                            ((Subtask) strTask).getEpicId());
                     manager.addNewSubtask(subtask);
                 } else {
-                    Task task = new Task(strTask.getName(), strTask.getDescription(), strTask.getStatus());
-                    task.setId(strTask.getId());
+                    Task task = new Task(strTask.getId(), strTask.getName(), strTask.getDescription(),
+                            strTask.getStatus(), strTask.getDuration(), strTask.getStartTime());
                     manager.addNewTask(task);
                 }
             }
@@ -62,7 +65,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (Subtask subtask : manager.subTasks.values()) {
                 Epic epic = manager.epics.get(subtask.getEpicId());
                 if (epic != null) {
-                    epic.addSubTaskId(subtask);
+                    epic.addSubTask(subtask);
                 }
             }
         } catch (IOException e) {
@@ -78,15 +81,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2];
         String description = fields[3];
         Status status = Status.valueOf(fields[4]);
-
+        Duration duration = Duration.parse(fields[5]);
+        LocalDateTime startTime = LocalDateTime.parse(fields[6]);
         switch (type) {
             case TASK:
-                return new Task(id, name, description, status);
+                return new Task(id, name, description, status, duration, startTime);
             case EPIC:
                 return new Epic(id, name, description);
             case SUBTASK:
-                int epicId = Integer.parseInt(fields[5]);
-                return new Subtask(id, name, description, status, epicId);
+                int epicId = Integer.parseInt(fields[7]);
+                return new Subtask(id, name, description, status, duration, startTime, epicId);
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
@@ -169,5 +173,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.deleteAllEpics();
         save();
     }
-
 }

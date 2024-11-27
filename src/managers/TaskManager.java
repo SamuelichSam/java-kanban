@@ -24,6 +24,8 @@ public interface TaskManager {
 
     List<Subtask> getAllEpicSabtusks(Integer epicId);
 
+    List<Task> getPrioritizedTasks();
+
     Task addNewTask(Task newTask);
 
     Subtask addNewSubtask(Subtask newSubtask);
