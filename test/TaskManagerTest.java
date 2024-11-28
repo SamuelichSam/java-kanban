@@ -248,4 +248,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(subtask1.getStartTime(), epic.getStartTime(), "Время начала эпика должно совпадать с началом подзадачи");
         Assertions.assertEquals(subtask3.getStartTime().plus(subtask3.getDuration()), epic.getEndTime(), "Время начала эпика должно совпадать с началом подзадачи");
     }
+
+    @Test
+    void updatedTaskShouldNotHaveCrossingError() {
+        Epic epic = taskManager.addNewEpic(new Epic(0, "Эпик-1", "Описание-1"));
+        Task task = new Task(1, "Задача-1", "Описание-1", Status.NEW, Duration.ofHours(1), LocalDateTime.of(2024, 11, 26, 12, 0, 0));
+        Task updatedTask = new Task(1, "Задача-1 upd", "Описание-1 upd", Status.NEW, Duration.ofHours(1), LocalDateTime.of(2024, 11, 26, 12, 0, 0));
+        Subtask subtask = new Subtask(2, "Подзадача-1", "Описание-1", Status.NEW, Duration.ofHours(1), LocalDateTime.of(2024, 11, 27, 12, 0, 0), 0);
+        Subtask updatedSubtask = new Subtask(2, "Подзадача-1 upd", "Описание-1 upd", Status.IN_PROGRESS, Duration.ofHours(1), LocalDateTime.of(2024, 11, 27, 12, 0, 0), 0);
+        taskManager.addNewTask(task);
+        taskManager.addNewSubtask(subtask);
+
+        taskManager.updateTask(updatedTask);
+        taskManager.updateSubtask(updatedSubtask);
+    }
 }

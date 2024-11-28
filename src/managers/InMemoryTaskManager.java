@@ -27,7 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    public boolean checkCrossing(Task task) {
+    private boolean checkCrossing(Task task) {
         LocalDateTime startTime = task.getStartTime();
         LocalDateTime endTime = task.getEndTime();
         return prioritizedTasks.stream()
@@ -55,10 +55,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task updateTask(Task updatedTask) {
-        if (checkCrossing(updatedTask)) {
-            throw new ManagerSaveException("Задача пересекается по времени с уже существующими");
-        }
         if (tasks.containsKey(updatedTask.getId())) {
+            Task updatedTask2 = tasks.get(updatedTask.getId());
+            prioritizedTasks.remove(updatedTask2);
+            if (checkCrossing(updatedTask)) {
+                prioritizedTasks.add(updatedTask2);
+                throw new ManagerSaveException("Задача пересекается по времени с уже существующими");
+            }
+            prioritizedTasks.add(updatedTask);
             tasks.put(updatedTask.getId(), updatedTask);
             return updatedTask;
         } else {
@@ -119,16 +123,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask updateSubtask(Subtask updatedSubtask) {
-        if (checkCrossing(updatedSubtask)) {
-            throw new ManagerSaveException("Подзадача пересекается по времени с уже существующими");
-        }
         if (subTasks.containsKey(updatedSubtask.getId())) {
+            Subtask updatedSubtask2 = subTasks.get(updatedSubtask.getId());
+            prioritizedTasks.remove(updatedSubtask2);
+            if (checkCrossing(updatedSubtask)) {
+                prioritizedTasks.add(updatedSubtask2);
+                throw new ManagerSaveException("Подзадача пересекается по времени с уже существующими");
+            }
+            prioritizedTasks.add(updatedSubtask);
             subTasks.put(updatedSubtask.getId(), updatedSubtask);
             Epic epic = epics.get(updatedSubtask.getEpicId());
             updateEpicStatus(epic);
-        }
-        if (updatedSubtask.getStatus() == Status.DONE) {
-            deleteSubtaskById(updatedSubtask.getId());
         }
         return updatedSubtask;
     }
