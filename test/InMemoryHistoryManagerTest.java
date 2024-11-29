@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
-import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -22,8 +21,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void taskShouldNotSaveOldHistoryVersion() {
-        Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
-        Task updTask = new Task(0, "Задача-1upd", "Описание-upd1", Status.IN_PROGRESS);
+        Task task = new Task(0, "Задача-1", "Описание-1");
+        Task updTask = new Task(0, "Задача-1upd", "Описание-upd1");
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         taskManager.addNewTask(task);
@@ -38,7 +37,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void testHistoryManagerCorrectHistory() {
-        Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
+        Task task = new Task(0, "Задача-1", "Описание-1");
         historyManager.add(task);
         List<Task> history = historyManager.getHistory();
 
@@ -48,8 +47,28 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
+    void historyShouldNotContainsDeletedTasks() {
+        Task task = new Task(0, "Задача-1", "Описание-1");
+        Epic epic = new Epic(1, "Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(2, "Задача-2", "Описание-2", 1);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        taskManager.addNewTask(task);
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubtask(subtask);
+
+        taskManager.getTaskById(0);
+        taskManager.getEpicById(1);
+        taskManager.getSubtaskById(2);
+        taskManager.deleteTaskById(0);
+        taskManager.deleteSubtaskById(2);
+        taskManager.deleteEpicById(1);
+
+        Assertions.assertEquals(0, taskManager.getHistory().size(), "В истории сохранились удалённые задачи");
+    }
+
+    @Test
     void historySouldNotSaveDouble() {
-        Task task = new Task(0, "Задача-1", "Описание-1", Status.NEW);
+        Task task = new Task(0, "Задача-1", "Описание-1");
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.addNewTask(task);
 
@@ -61,24 +80,65 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void historyShouldNotContainsDeletedTasks() {
-        Task task = new Task("Задача-1", "Описание-1", Status.NEW);
-        Epic epic = new Epic("Эпик-1", "Описание-1");
-        Subtask subtask = new Subtask(2,"Задача-2", "Описание-2", Status.NEW, 1);
+    void emptyHistory() {
+        Task task = new Task(0, "Задача-1", "Описание-1");
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         taskManager.addNewTask(task);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subtask);
 
-        taskManager.getTaskById(0);
-        taskManager.getEpicById(1);
-        taskManager.getSubtaskById(2);
+        Assertions.assertEquals(historyManager.getHistory().size(), 0);
+    }
 
-        taskManager.deleteTaskById(0);
-        taskManager.deleteSubtaskById(2);
-        taskManager.deleteEpicById(1);
+    @Test
+    void removeFromStartOfHistory() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        Task task1 = new Task(0, "Задача-1", "Описание-1");
+        Task task2 = new Task(1, "Задача-2", "Описание-2");
+        Task task3 = new Task(2, "Задача-3", "Описание-3");
 
-        Assertions.assertEquals(0, taskManager.getHistory().size(), "В истории сохранились удалённые задачи");
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.remove(0);
+        List<Task> tasks = historyManager.getTasks();
+
+        Assertions.assertEquals(2, tasks.size());
+        Assertions.assertEquals(task2, tasks.get(0));
+    }
+
+    @Test
+    void removeFromMiddleOfHistory() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        Task task1 = new Task(0, "Задача-1", "Описание-1");
+        Task task2 = new Task(1, "Задача-2", "Описание-2");
+        Task task3 = new Task(2, "Задача-3", "Описание-3");
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.remove(1);
+        List<Task> tasks = historyManager.getTasks();
+
+        Assertions.assertEquals(2, tasks.size());
+        Assertions.assertEquals(task1, tasks.get(0));
+        Assertions.assertEquals(task3, tasks.get(1));
+    }
+
+    @Test
+    void removeFromEndOfHistory() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        Task task1 = new Task(0, "Задача-1", "Описание-1");
+        Task task2 = new Task(1, "Задача-2", "Описание-2");
+        Task task3 = new Task(2, "Задача-3", "Описание-3");
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.remove(2);
+        List<Task> tasks = historyManager.getTasks();
+
+        Assertions.assertEquals(2, tasks.size());
+        Assertions.assertEquals(task1, tasks.get(0));
+        Assertions.assertEquals(task2, tasks.get(1));
     }
 }
