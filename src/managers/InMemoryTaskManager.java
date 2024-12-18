@@ -14,7 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Subtask> subTasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
-    protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = new InMemoryHistoryManager();
     protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected Integer counterId = 0;
 
@@ -28,13 +28,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean checkCrossing(Task task) {
-        LocalDateTime startTime = task.getStartTime();
-        LocalDateTime endTime = task.getEndTime();
-        return prioritizedTasks.stream()
-                .anyMatch(e ->
-                        !(e.getStartTime().isAfter(endTime) || e.getEndTime().isBefore(startTime))
-                );
+        if (task.getStartTime() != null) {
+            LocalDateTime startTime = task.getStartTime();
+            LocalDateTime endTime = task.getEndTime();
+            return prioritizedTasks.stream()
+                    .anyMatch(e ->
+                            !(e.getStartTime().isAfter(endTime) || e.getEndTime().isBefore(startTime))
+                    );
+        } else {
+            return false;
+        }
     }
+
 
     @Override
     public Task addNewTask(Task newTask) {
@@ -45,10 +50,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (!newTask.isInitialized()) {
             newTask.setId(newId);
         }
-        if (!newTask.getStartTime().equals(LocalDateTime.MIN)) {
+        newTask.setStatus(Status.NEW);
+        if (newTask.getStartTime() != null) {
             prioritizedTasks.add(newTask);
         }
-
         tasks.put(newTask.getId(), newTask);
         return newTask;
     }
@@ -56,13 +61,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task updateTask(Task updatedTask) {
         if (tasks.containsKey(updatedTask.getId())) {
-            Task updatedTask2 = tasks.get(updatedTask.getId());
-            prioritizedTasks.remove(updatedTask2);
+            Task takedTask = tasks.get(updatedTask.getId());
+            prioritizedTasks.remove(takedTask);
             if (checkCrossing(updatedTask)) {
-                prioritizedTasks.add(updatedTask2);
+                prioritizedTasks.add(takedTask);
                 throw new ManagerSaveException("Задача пересекается по времени с уже существующими");
             }
-            prioritizedTasks.add(updatedTask);
+            if (updatedTask.getStartTime() != null) {
+                prioritizedTasks.add(updatedTask);
+            }
             tasks.put(updatedTask.getId(), updatedTask);
             return updatedTask;
         } else {
@@ -103,14 +110,14 @@ public class InMemoryTaskManager implements TaskManager {
         Integer newId = generateNewId();
         Epic epic = epics.get(newSubtask.getEpicId());
         if (epic == null) {
-            return null;
+            throw new ManagerSaveException("У подзадачи не указан epicId");
         }
         if (!newSubtask.isInitialized()) {
             newSubtask.setId(newId);
         }
+        newSubtask.setStatus(Status.NEW);
         epic.addSubTask(newSubtask);
-
-        if (!newSubtask.getStartTime().equals(LocalDateTime.MIN)) {
+        if (newSubtask.getStartTime() != null) {
             if (checkCrossing(newSubtask)) {
                 throw new ManagerSaveException("Подзадача пересекается по времени с уже существующими");
             }
@@ -124,13 +131,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask updateSubtask(Subtask updatedSubtask) {
         if (subTasks.containsKey(updatedSubtask.getId())) {
-            Subtask updatedSubtask2 = subTasks.get(updatedSubtask.getId());
-            prioritizedTasks.remove(updatedSubtask2);
+            Subtask takedSubtask = subTasks.get(updatedSubtask.getId());
+            prioritizedTasks.remove(takedSubtask);
             if (checkCrossing(updatedSubtask)) {
-                prioritizedTasks.add(updatedSubtask2);
+                prioritizedTasks.add(takedSubtask);
                 throw new ManagerSaveException("Подзадача пересекается по времени с уже существующими");
             }
-            prioritizedTasks.add(updatedSubtask);
+            if (updatedSubtask.getStartTime() != null) {
+                prioritizedTasks.add(updatedSubtask);
+            }
             subTasks.put(updatedSubtask.getId(), updatedSubtask);
             Epic epic = epics.get(updatedSubtask.getEpicId());
             updateEpicStatus(epic);

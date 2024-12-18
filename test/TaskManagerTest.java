@@ -52,9 +52,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task expectedUpdatedTask =
                 new Task(addedTask.getId(), "Задача-1 upd", "Описание-1 upd");
 
-        Task actualUpdatedTask = taskManager.updateTask(updatedTask);
+        taskManager.updateTask(updatedTask);
 
-        Assertions.assertEquals(expectedUpdatedTask, actualUpdatedTask, "После обновления задачи не совпадают");
+        Assertions.assertEquals(expectedUpdatedTask, updatedTask, "После обновления задачи не совпадают");
     }
 
     @Test

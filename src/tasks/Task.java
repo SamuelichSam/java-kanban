@@ -10,8 +10,8 @@ public class Task {
     protected String description;
     protected Status status;
     protected boolean initialize;
-    protected Duration duration = Duration.ZERO;
-    protected LocalDateTime startTime = LocalDateTime.MIN;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(Integer id, String name, String description, Status status, Duration duration, LocalDateTime startTime) {
         this.id = id;
@@ -26,7 +26,11 @@ public class Task {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.status = Status.NEW;
+    }
+
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     public LocalDateTime getStartTime() {
