@@ -51,9 +51,4 @@ public abstract class BaseHttpHandler implements HttpHandler {
         sendText(h, "Method Not Allowed", 405);
         h.getResponseBody().close();
     }
-
-    protected void sendBadRequest(HttpExchange h) throws IOException {
-        sendText(h, "Bad Request", 400);
-        h.getResponseBody().close();
-    }
 }
