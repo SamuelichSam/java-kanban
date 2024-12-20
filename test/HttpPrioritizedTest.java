@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder;
 import main.HttpTaskServer;
 import managers.InMemoryTaskManager;
 import managers.TaskManager;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import tasks.Epic;
 import tasks.Status;
+import tasks.Subtask;
 import tasks.Task;
 
 import java.io.IOException;
@@ -21,20 +23,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TasksHttpPostTest {
-
+public class HttpPrioritizedTest {
     TaskManager manager = new InMemoryTaskManager();
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
+            .setPrettyPrinting()
+            .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
 
-
-    public TasksHttpPostTest() throws IOException {
+    public HttpPrioritizedTest() throws IOException {
     }
 
     @BeforeEach
@@ -51,27 +50,29 @@ public class TasksHttpPostTest {
     }
 
     @Test
-    public void HttpAddTaskTest() throws IOException, InterruptedException {
-        Task task = new Task(0,"Задача-1", "Описание-1",
+    public void HttpGetPrioritizedTest() throws IOException, InterruptedException {
+        Task task = new Task(0, "Задача-1", "Описание-1",
                 Status.NEW, Duration.ofMinutes(5), LocalDateTime.now());
-        String taskJson = gson.toJson(task);
+        Epic epic = new Epic(1, "Эпик-1", "Описание-1");
+        Subtask subtask = new Subtask(0, "Задача-2", "Описание-2",
+                Status.NEW, Duration.ofMinutes(5), LocalDateTime.now().plusDays(1), epic.getId());
+
+        manager.addNewTask(task);
+        manager.addNewEpic(epic);
+        manager.addNewSubtask(subtask);
 
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks");
+        URI url = URI.create("http://localhost:8080/prioritized");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
-                .header("Content-Type", "application/json;charset=utf-8")
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
+                .GET()
                 .build();
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
         assertEquals(200, response.statusCode());
 
-        List<Task> tasksFromManager = manager.getAllTasks();
+        List<Task> pTasks = gson.fromJson(response.body(), List.class);
 
-        assertNotNull(tasksFromManager, "Задачи не возвращаются");
-        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-        assertEquals("Test 2", tasksFromManager.get(0).getName(), "Некорректное имя задачи");
+        assertEquals(2, pTasks.size(), "Не верное количество задач");
     }
 }
-

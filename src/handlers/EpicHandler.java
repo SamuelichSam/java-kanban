@@ -5,10 +5,9 @@ import com.sun.net.httpserver.HttpExchange;
 import exceptions.NotFoundException;
 import managers.TaskManager;
 import tasks.Epic;
-import tasks.Task;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class EpicHandler extends BaseHttpHandler {
 
@@ -76,18 +75,13 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void handlePost(HttpExchange exchange) throws IOException, NotFoundException {
-        InputStream inputStream = exchange.getRequestBody();
-        Epic epic = gson.fromJson(inputStream.toString(), Epic.class);
-        if (epic.getId() == null) {
+        String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        Epic epic = gson.fromJson(body, Epic.class);
+        try {
             taskManager.addNewEpic(epic);
-            sendOk(exchange, gson.toJson(epic));
-        } else {
-            try {
-                taskManager.updateEpic(epic);
-                sendOk(exchange, gson.toJson(epic));
-            } catch (Exception e) {
-                sendNotAcceptable(exchange);
-            }
+            sendOk(exchange, "Задача добавлена");
+        } catch (Exception e) {
+            sendNotAcceptable(exchange);
         }
     }
 

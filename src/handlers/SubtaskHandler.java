@@ -86,7 +86,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         try {
             Integer id = Integer.parseInt(splitStrings[2]);
             taskManager.deleteSubtaskById(id);
-            sendOkAndBack(exchange, "Задача " + taskManager.getSubtaskById(id) + " удалена");
+            sendOkAndBack(exchange, "Задача удалена");
         } catch (NumberFormatException e) {
             sendNotFound(exchange);
         } catch (Exception e) {

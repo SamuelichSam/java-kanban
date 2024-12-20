@@ -75,10 +75,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void subtaskShouldNotAddedIfEpicIsNull() {
         Epic epic = null;
         Subtask subtask = new Subtask(0, "Задача-1", "Описание-1", 0);
+        boolean exception = false;
 
-        Task addedSubtask = taskManager.addNewSubtask(subtask);
+        try {
+            taskManager.addNewSubtask(subtask);
+        } catch (ManagerSaveException e) {
+            exception = true;
+        }
 
-        Assertions.assertNull(addedSubtask, "Подзадача не может быть создана без Эпика");
+        Assertions.assertTrue(exception, "Подзадача не может быть создана без Эпика");
     }
 
     @Test

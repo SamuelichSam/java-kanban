@@ -16,11 +16,11 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendText(HttpExchange h, String text, int rCode) throws IOException {
-        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-        h.sendResponseHeaders(rCode, resp.length);
-        h.getResponseBody().write(resp);
-        h.close();
+            byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+            h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+            h.sendResponseHeaders(rCode, resp.length);
+            h.getResponseBody().write(resp);
+            h.close();
     }
 
     protected void sendOkAndBack(HttpExchange h, String text) throws IOException {
@@ -29,8 +29,8 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendOk(HttpExchange h, String text) throws IOException {
-        sendText(h, text, 201);
-        h.getResponseBody().close();
+            sendText(h, text, 201);
+            h.getResponseBody().close();
     }
 
     protected void sendNotFound(HttpExchange h) throws IOException {
@@ -49,6 +49,11 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
     protected void sendMethodNotAllowed(HttpExchange h) throws IOException {
         sendText(h, "Method Not Allowed", 405);
+        h.getResponseBody().close();
+    }
+
+    protected void sendBadRequest(HttpExchange h) throws IOException {
+        sendText(h, "Bad Request", 400);
         h.getResponseBody().close();
     }
 }

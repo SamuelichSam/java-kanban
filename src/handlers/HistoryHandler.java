@@ -28,7 +28,8 @@ public class HistoryHandler extends BaseHttpHandler {
 
     private void handleGet(HttpExchange exchange) throws IOException {
         try {
-            sendOkAndBack(exchange, gson.toJson(taskManager.getHistory()));
+            List<Task> tasks = taskManager.getHistory();
+            sendOkAndBack(exchange, gson.toJson(tasks));
         } catch (Exception e) {
             sendNotFound(exchange);
         }

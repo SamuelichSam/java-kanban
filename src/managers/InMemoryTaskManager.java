@@ -33,13 +33,11 @@ public class InMemoryTaskManager implements TaskManager {
             LocalDateTime endTime = task.getEndTime();
             return prioritizedTasks.stream()
                     .anyMatch(e ->
-                            !(e.getStartTime().isAfter(endTime) || e.getEndTime().isBefore(startTime))
-                    );
+                            !(e.getStartTime().isAfter(endTime) || e.getEndTime().isBefore(startTime)));
         } else {
             return false;
         }
     }
-
 
     @Override
     public Task addNewTask(Task newTask) {
@@ -110,12 +108,11 @@ public class InMemoryTaskManager implements TaskManager {
         Integer newId = generateNewId();
         Epic epic = epics.get(newSubtask.getEpicId());
         if (epic == null) {
-            throw new ManagerSaveException("У подзадачи не указан epicId");
+            throw new ManagerSaveException("У подзадачи не верный epicId");
         }
         if (!newSubtask.isInitialized()) {
             newSubtask.setId(newId);
         }
-        newSubtask.setStatus(Status.NEW);
         epic.addSubTask(newSubtask);
         if (newSubtask.getStartTime() != null) {
             if (checkCrossing(newSubtask)) {
@@ -188,6 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!newEpic.isInitialized()) {
             newEpic.setId(newId);
         }
+        newEpic.setStatus(Status.NEW);
         epics.put(newEpic.getId(), newEpic);
         return newEpic;
     }

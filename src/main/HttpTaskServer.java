@@ -7,10 +7,6 @@ import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import managers.*;
-import tasks.Epic;
-import tasks.Status;
-import tasks.Subtask;
-import tasks.Task;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -43,6 +39,10 @@ public class HttpTaskServer {
 
     public void stop() {
         httpServer.stop(0);
+    }
+
+    public Gson getGson() {
+        return gson;
     }
 
     public static void main(String[] args) throws Exception {
