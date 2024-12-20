@@ -47,6 +47,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
         sendText(h, "Internal Server Error", 500);
         h.getResponseBody().close();
     }
+
     protected void sendMethodNotAllowed(HttpExchange h) throws IOException {
         sendText(h, "Method Not Allowed", 405);
         h.getResponseBody().close();
