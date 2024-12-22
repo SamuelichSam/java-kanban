@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpHistoryTest {
     TaskManager manager = new InMemoryTaskManager();
     HttpTaskServer taskServer = new HttpTaskServer(manager);
+    HttpClient client;
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(Duration.class, new DurationAdapter())
@@ -42,6 +43,7 @@ public class HttpHistoryTest {
         manager.deleteAllSubtasks();
         manager.deleteAllEpics();
         taskServer.startServer();
+        client = HttpClient.newHttpClient();
     }
 
     @AfterEach
@@ -61,38 +63,37 @@ public class HttpHistoryTest {
         manager.addNewEpic(epic);
         manager.addNewSubtask(subtask);
 
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/" + task.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
+        URI tasksUrl = URI.create("http://localhost:8080/tasks/" + task.getId());
+        HttpRequest tasksReq = HttpRequest.newBuilder()
+                .uri(tasksUrl)
                 .GET()
                 .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> tasksResp = client.send(tasksReq, HttpResponse.BodyHandlers.ofString());
 
-        URI url2 = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-        HttpRequest request2 = HttpRequest.newBuilder()
-                .uri(url2)
+        URI subtasksUrl = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
+        HttpRequest subtasksReq = HttpRequest.newBuilder()
+                .uri(subtasksUrl)
                 .GET()
                 .build();
-        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> subtasksResp = client.send(subtasksReq, HttpResponse.BodyHandlers.ofString());
 
-        URI url3 = URI.create("http://localhost:8080/epics/" + epic.getId());
-        HttpRequest request3 = HttpRequest.newBuilder()
-                .uri(url3)
+        URI epicsUrl = URI.create("http://localhost:8080/epics/" + epic.getId());
+        HttpRequest epicsReq = HttpRequest.newBuilder()
+                .uri(epicsUrl)
                 .GET()
                 .build();
-        HttpResponse<String> response3 = client.send(request3, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> epicsResp = client.send(epicsReq, HttpResponse.BodyHandlers.ofString());
 
-        URI url4 = URI.create("http://localhost:8080/history");
-        HttpRequest request4 = HttpRequest.newBuilder()
-                .uri(url4)
+        URI historyUrl = URI.create("http://localhost:8080/history");
+        HttpRequest historyReq = HttpRequest.newBuilder()
+                .uri(historyUrl)
                 .GET()
                 .build();
-        HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> historyResp = client.send(historyReq, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(200, historyResp.statusCode());
 
-        List<Task> hTasks = gson.fromJson(response4.body(), List.class);
+        List<Task> hTasks = gson.fromJson(historyResp.body(), List.class);
 
         assertEquals(3, hTasks.size(), "Не верное количество задач");
     }

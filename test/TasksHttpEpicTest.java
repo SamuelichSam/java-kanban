@@ -148,6 +148,27 @@ public class TasksHttpEpicTest {
     }
 
     @Test
+    public void HttpUpdateEpicTest() throws IOException, InterruptedException {
+        Epic epic = new Epic("Эпик-1", "Описание-1");
+        manager.addNewEpic(epic);
+
+        Epic updEpic = new Epic(epic.getId(), "Эпик-2", "Описание-2");
+        String taskJson = gson.toJson(updEpic);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics" + epic.getId());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .header("Content-Type", "application/json;charset=utf-8")
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(201, response.statusCode());
+        assertEquals("Эпик-2", manager.getEpicById(epic.getId()).getName(), "Задача не обновилась");
+    }
+
+    @Test
     public void HttpDeleteEpicByIdTest() throws IOException, InterruptedException {
         Epic epic = new Epic(0, "Эпик-1", "Описание-1");
         manager.addNewEpic(epic);

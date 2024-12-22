@@ -77,11 +77,16 @@ public class EpicHandler extends BaseHttpHandler {
     private void handlePost(HttpExchange exchange) throws IOException, NotFoundException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Epic epic = gson.fromJson(body, Epic.class);
-        try {
+        if (epic.getId() == null || taskManager.getEpicById(epic.getId()) == null) {
             taskManager.addNewEpic(epic);
             sendOk(exchange, "Задача добавлена");
-        } catch (Exception e) {
-            sendNotAcceptable(exchange);
+        } else {
+            try {
+                taskManager.updateEpic(epic);
+                sendOk(exchange, "Задача обновлена");
+            } catch (Exception e) {
+                sendNotAcceptable(exchange);
+            }
         }
     }
 
