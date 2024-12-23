@@ -52,9 +52,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task expectedUpdatedTask =
                 new Task(addedTask.getId(), "Задача-1 upd", "Описание-1 upd");
 
-        Task actualUpdatedTask = taskManager.updateTask(updatedTask);
+        taskManager.updateTask(updatedTask);
 
-        Assertions.assertEquals(expectedUpdatedTask, actualUpdatedTask, "После обновления задачи не совпадают");
+        Assertions.assertEquals(expectedUpdatedTask, updatedTask, "После обновления задачи не совпадают");
     }
 
     @Test
@@ -73,12 +73,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void subtaskShouldNotAddedIfEpicIsNull() {
-        Epic epic = null;
         Subtask subtask = new Subtask(0, "Задача-1", "Описание-1", 0);
 
-        Task addedSubtask = taskManager.addNewSubtask(subtask);
-
-        Assertions.assertNull(addedSubtask, "Подзадача не может быть создана без Эпика");
+        Assertions.assertThrows(ManagerSaveException.class, () -> taskManager.addNewSubtask(subtask), "Подзадача не может быть создана без Эпика");
     }
 
     @Test
